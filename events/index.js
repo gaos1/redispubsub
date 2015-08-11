@@ -1,7 +1,10 @@
 'use strict';
 var redis = require('redis');
-var sub = redis.createClient();
-var pub = redis.createClient();
+var vcap_services = JSON.parse(process.env.VCAP_SERVICES)
+var sub = redis.createClient(vcap_services.redis[0].credentials.port, vcap_services.redis[0].credentials.host, {host: vcap_services.redis[0].credentials.host, port: vcap_services.redis[0].credentials.port, password: vcap_services.redis[0].credentials.password});
+sub.auth(vcap_services.redis[0].credentials.password)
+var pub = redis.createClient(vcap_services.redis[0].credentials.port, vcap_services.redis[0].credentials.host, {host: vcap_services.redis[0].credentials.host, port: vcap_services.redis[0].credentials.port, password: vcap_services.redis[0].credentials.password});
+pub.auth(vcap_services.redis[0].credentials.password)
 sub.subscribe('chat');
 
 module.exports = function(io) {

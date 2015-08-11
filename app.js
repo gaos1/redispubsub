@@ -11,8 +11,10 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var connectRedis = require('connect-redis');
 var RedisStore = connectRedis(session);
-var rClient = redis.createClient();
-var sessionStore = new RedisStore({client: rClient});
+var vcap_services = JSON.parse(process.env.VCAP_SERVICES)
+var rClient = redis.createClient(vcap_services.redis[0].credentials.port, vcap_services.redis[0].credentials.host, {host: vcap_services.redis[0].credentials.host, port: vcap_services.redis[0].credentials.port, password: vcap_services.redis[0].credentials.password});
+rClient.auth(vcap_services.redis[0].credentials.password)
+var sessionStore = new RedisStore({client: rClient, host: vcap_services.redis[0].credentials.host, port: vcap_services.redis[0].credentials.port, password: vcap_services.redis[0].credentials.password});
 
 var app = express();
 

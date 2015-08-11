@@ -1,0 +1,9 @@
+applications:
+- name: chat
+  memory: 512M
+  instances: 1
+  host: chat
+  domain: birdnest.cf-app.com
+  services:
+  - chat-redis
+
